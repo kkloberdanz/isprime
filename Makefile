@@ -1,18 +1,15 @@
 CC=cc
 OPT=-O2
 STD=-std=gnu18
-LDFLAGS=-lgmp
+LDFLAGS=-L/usr/local/lib/ -lgmp
+INC=-I/usr/local/include/
 WARNING=-Werror -Wall -Wextra -Wpedantic -Wfloat-equal -Wundef -Wshadow \
 		-Wpointer-arith -Wcast-align -Wstrict-prototypes -Wmissing-prototypes \
 		-Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Wcast-qual \
 		-Wswitch-enum -Wunreachable-code -Wformat -Wformat-security -Wvla \
 
 FLAGS=-fstack-protector-all -fPIE -pipe
-CFLAGS=$(WARNING) $(STD) $(OPT) $(FLAGS)
-
-SRC = $(wildcard *.c)
-HEADERS = $(wildcard *.h)
-OBJS = $(patsubst %.c,%.o,$(SRC))
+CFLAGS=$(WARNING) $(STD) $(OPT) $(FLAGS) $(INC)
 
 .PHONY: release
 release: OPT=-O2 -D_FORTIFY_SOURCE=2
@@ -29,8 +26,8 @@ sanitize: all
 .PHONY: all
 all: isprime
 
-isprime: $(OBJS)
-	$(CC) -o isprime $(OBJS) $(CFLAGS) $(LDFLAGS)
+isprime: isprime.c
+	$(CC) -o isprime isprime.c $(CFLAGS) $(LDFLAGS)
 
 %.o: %.c $(HEADERS)
 	$(CC) -c $< -o $@ $(CFLAGS)
